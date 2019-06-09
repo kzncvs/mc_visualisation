@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Start</title>
+    <script src="/static/highcharts.js"></script>
+    <script src="/static/series-label.js"></script>
+    <script src="/static/exporting.js"></script>
+    <script src="static//export-data.js"></script>
+</head>
+<body>
+    {{info | safe }}
+
+    <form action="/" method="get">
+        <br>
+        <br>
+        <b>Chart 1</b>:
+        <br>
+        <label for="plate">Plate</label>
+        <select name="plate" id="plate">
+            {% for o in data %}
+                {% if o == current_plate %}
+                    <option value="{{ o }}"  selected="selected">{{ o }}</option>
+                {% else %}
+                    <option value="{{ o }}">{{ o }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+        <br>
+        <label for="t_feature">Tthermodynamic feature</label>
+        <select name="t_feature" id="t_feature">
+            {% for o in features %}
+                {% if o == current_feature %}
+                    <option value="{{ o }}"  selected="selected">{{ o }}</option>
+                {% else %}
+                    <option value="{{ o }}">{{ o }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+        <br>
+        <br>
+
+        <b>Chart 2</b>:
+        <br>
+        <label for="cycle">Cycle</label>
+            <input type="number" id="cycle" name="cycle" min="1" max="{{max_cycle}}" value={{current_cycle}}>
+        <br>
+        <label for="c_feature">Thermodynamic feature</label>
+        <select name="c_feature" id="c_feature">
+            {% for o in features %}
+                {% if o == current_c_feature %}
+                    <option value="{{ o }}"  selected="selected">{{ o }}</option>
+                {% else %}
+                    <option value="{{ o }}">{{ o }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+        <br>
+        <br>
+
+        <input type="submit" value="go">
+    </form>
+
+
+
+    <br>
+    <br>
+    <div id="container" style="min-width: 310px; height: 400px; max-width: 800px;"></div>
+    <div id="container2" style="min-width: 310px; height: 400px; max-width: 800px;"></div>
+    <script type="text/javascript">
+        Highcharts.chart('container', {
+            chart: {
+                type: 'line'
+            },
+            title: {
+                text: '{{ current_plate }}'
+            },
+            xAxis: {
+                categories: {{x_axis}},
+                tickmarkPlacement: 'on',
+                title: {
+                    text: 'cycle'
+                }
+            },
+            yAxis: {
+                title: {
+                    text: '{{feature_measure}}'
+                }
+            },
+            tooltip: {
+                pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y} {{feature_measure}}<br/>',
+                split: true
+            },
+            series: [
+                {
+                    name: '{{ current_feature }}',
+                    data: {{line}}
+                }
+            ]
+        });
+
+        Highcharts.chart('container2', {
+            chart: {
+                type: 'line'
+            },
+            title: {
+                text: 'Cycle {{ current_cycle }}'
+            },
+            xAxis: {
+                categories: {{graph_2_legend}},
+                tickmarkPlacement: 'on',
+                title: {
+                    text: 'plate'
+                }
+            },
+            yAxis: {
+                title: {
+                    text: '{{feature2_measure}}'
+                }
+            },
+            tooltip: {
+                pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y} {{feature2_measure}}<br/>',
+                split: true
+            },
+            series: [
+                {
+                    name: '{{ current_c_feature }}',
+                    data: {{line2}}
+                }
+            ]
+        });
+
+    </script>
+</body>
+</html>
